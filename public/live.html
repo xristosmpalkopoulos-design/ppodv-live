@@ -1,20 +1,15 @@
 <!DOCTYPE html>
-<html lang="el">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ENGAGE LIVE</title>
+<title>LIVE</title>
 </head>
 
-<body style="background:#000;color:#fff;text-align:center;font-family:Arial;padding-top:50px;">
+<body style="background:black;color:white;text-align:center;padding-top:50px;">
 
-<h1>🎙️ ΖΩΝΤΑΝΗ ΜΕΤΑΔΟΣΗ</h1>
+<h1>LIVE TEST</h1>
 
-<h2 id="status">🔴 OFF AIR</h2>
-
-<button style="font-size:24px;padding:15px 30px;">
-🔊 ΑΚΡΟΑΣΗ
-</button>
+<h2 id="status">OFF AIR</h2>
 
 <script src="/socket.io/socket.io.js"></script>
 
@@ -22,27 +17,14 @@
 
 const socket = io();
 
-console.log("CONNECTED");
-
-socket.on('connect', () => {
-    console.log("SOCKET OK");
+socket.on("connect", () => {
+    console.log("CONNECTED");
 });
 
-socket.on('disconnect', () => {
-    console.log("SOCKET LOST");
-});
+socket.on("status", (state) => {
 
-socket.on('status', (state) => {
-
-    console.log("STATUS:", state);
-
-    const status = document.getElementById('status');
-
-    if (state) {
-        status.innerHTML = '🟢 ON AIR';
-    } else {
-        status.innerHTML = '🔴 OFF AIR';
-    }
+    document.getElementById("status").innerHTML =
+        state ? "ON AIR" : "OFF AIR";
 
 });
 
