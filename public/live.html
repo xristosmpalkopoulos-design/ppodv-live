@@ -27,7 +27,9 @@ socket.on("status", (state) => {
         state ? "ON AIR" : "OFF AIR";
 
 });
-
+socket.on('connect', () => {
+    document.getElementById('status').innerHTML = '🟡 CONNECTED';
+});
 </script>
 
 </body>
