@@ -5,7 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ENGAGE CONTROL</title>
 </head>
+<script src="/socket.io/socket.io.js"></script>
 
+<script>
+const socket = io();
+
+const startBtn = document.getElementById('start');
+const stopBtn = document.getElementById('stop');
+
+startBtn.onclick = () => {
+    socket.emit('start-broadcast');
+};
+
+stopBtn.onclick = () => {
+    socket.emit('stop-broadcast');
+};
+
+socket.on('status', (state) => {
+
+    const h2 = document.querySelector('h2');
+
+    if(state){
+        h2.innerHTML = '🟢 ON AIR';
+    } else {
+        h2.innerHTML = '🔴 OFF AIR';
+    }
+
+});
+</script>
 <body style="background:#111;color:#fff;text-align:center;font-family:Arial;padding-top:50px;">
 
 <h1>🎙️ ΚΕΝΤΡΟ ΕΠΙΧΕΙΡΗΣΕΩΝ</h1>
