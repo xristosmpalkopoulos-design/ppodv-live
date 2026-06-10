@@ -5,7 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ENGAGE LIVE</title>
 </head>
+<script src="/socket.io/socket.io.js"></script>
 
+<script>
+const socket = io();
+
+socket.on('status', (state) => {
+
+    const status = document.getElementById('status');
+
+    if(state){
+        status.innerHTML = '🟢 ON AIR';
+    } else {
+        status.innerHTML = '🔴 OFF AIR';
+    }
+
+});
+</script>
 <body style="background:#000;color:#fff;text-align:center;font-family:Arial;padding-top:50px;">
 
 <h1>🎙️ ΖΩΝΤΑΝΗ ΜΕΤΑΔΟΣΗ</h1>
