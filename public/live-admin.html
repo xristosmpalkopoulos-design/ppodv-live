@@ -24,9 +24,13 @@ let stream;
 document.getElementById("start").onclick = async () => {
 
     stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: false
-    });
+    audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+    },
+    video: false
+});
 
     pc = new RTCPeerConnection();
 
