@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LIVE</title>
+</head>
+
+<body>
+
+<h1>🔊 LIVE</h1>
+
+<h2 id="status">CONNECTING...</h2>
+
+<audio id="audio" autoplay controls></audio>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+const audio = document.getElementById("audio");
+
+let pc = new RTCPeerConnection();
+
+pc.ontrack = (event) => {
+
+    audio.srcObject = event.streams[0];
+
+    document.getElementById("status").innerHTML =
+        "🟢 AUDIO RECEIVED";
+};
+
+pc.onicecandidate = (event) => {
+    if(event.candidate){
+        socket.emit("ice-candidate", event.candidate);
+    }
+};
+
+socket.on("offer", async (offer) => {
+
+    await pc.setRemoteDescription(offer);
+
+    const answer = await pc.createAnswer();
+
+    await pc.setLocalDescription(answer);
+
+    socket.emit("answer", answer);
+
+});
+
+socket.on("ice-candidate", async (candidate) => {
+
+    try{
+        await pc.addIceCandidate(candidate);
+    }catch(e){}
+
+});
+
+</script>
+
+</body>
+</html>
