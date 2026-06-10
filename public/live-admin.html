@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ADMIN</title>
+</head>
+<body>
+
+<h1>🎙️ ΚΕΝΤΡΟ</h1>
+
+<button id="start">ΕΝΑΡΞΗ</button>
+
+<h2 id="status">OFF AIR</h2>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+let pc;
+let stream;
+
+document.getElementById("start").onclick = async () => {
+
+    stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+    });
+
+    pc = new RTCPeerConnection();
+
+    stream.getTracks().forEach(track => {
+        pc.addTrack(track, stream);
+    });
+
+    pc.onicecandidate = (event) => {
+        if(event.candidate){
+            socket.emit("ice-candidate", event.candidate);
+        }
+    };
+
+    const offer = await pc.createOffer();
+
+    await pc.setLocalDescription(offer);
+
+    socket.emit("offer", offer);
+
+    document.getElementById("status").innerHTML = "🟢 ON AIR";
+};
+
+socket.on("answer", async (answer) => {
+    if(pc){
+        await pc.setRemoteDescription(answer);
+    }
+});
+
+socket.on("ice-candidate", async (candidate) => {
+    if(pc){
+        try{
+            await pc.addIceCandidate(candidate);
+        }catch(e){}
+    }
+});
+
+</script>
+
+</body>
+</html>
