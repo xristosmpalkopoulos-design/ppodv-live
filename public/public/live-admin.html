@@ -1,26 +1,69 @@
 <!DOCTYPE html>
-<html lang="el">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ENGAGE CONTROL</title>
+<title>ADMIN</title>
 </head>
+<body>
 
-<body style="background:#111;color:#fff;text-align:center;font-family:Arial;padding-top:50px;">
+<h1>🎙️ ΚΕΝΤΡΟ</h1>
 
-<h1>🎙️ ΚΕΝΤΡΟ ΕΠΙΧΕΙΡΗΣΕΩΝ</h1>
+<button id="start">ΕΝΑΡΞΗ</button>
 
-<button id="start" style="font-size:24px;padding:15px 30px;">
-🎙️ ΕΝΑΡΞΗ ΜΕΤΑΔΟΣΗΣ
-</button>
+<h2 id="status">OFF AIR</h2>
 
-<br><br>
+<script src="/socket.io/socket.io.js"></script>
 
-<button id="stop" style="font-size:24px;padding:15px 30px;">
-⏹️ ΔΙΑΚΟΠΗ
-</button>
+<script>
 
-<h2>🔴 OFF AIR</h2>
+const socket = io();
+
+let pc;
+let stream;
+
+document.getElementById("start").onclick = async () => {
+
+    stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+    });
+
+    pc = new RTCPeerConnection();
+
+    stream.getTracks().forEach(track => {
+        pc.addTrack(track, stream);
+    });
+
+    pc.onicecandidate = (event) => {
+        if(event.candidate){
+            socket.emit("ice-candidate", event.candidate);
+        }
+    };
+
+    const offer = await pc.createOffer();
+
+    await pc.setLocalDescription(offer);
+
+    socket.emit("offer", offer);
+
+    document.getElementById("status").innerHTML = "🟢 ON AIR";
+};
+
+socket.on("answer", async (answer) => {
+    if(pc){
+        await pc.setRemoteDescription(answer);
+    }
+});
+
+socket.on("ice-candidate", async (candidate) => {
+    if(pc){
+        try{
+            await pc.addIceCandidate(candidate);
+        }catch(e){}
+    }
+});
+
+</script>
 
 </body>
 </html>
