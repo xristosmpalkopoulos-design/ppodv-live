@@ -1,3 +1,21 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENGAGE LIVE</title>
+</head>
+
+<body style="background:#000;color:#fff;text-align:center;font-family:Arial;padding-top:50px;">
+
+<h1>🎙️ ΖΩΝΤΑΝΗ ΜΕΤΑΔΟΣΗ</h1>
+
+<h2 id="status">🔴 OFF AIR</h2>
+
+<button style="font-size:24px;padding:15px 30px;">
+🔊 ΑΚΡΟΑΣΗ
+</button>
+
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
@@ -10,13 +28,17 @@ socket.on('connect', () => {
     console.log("SOCKET OK");
 });
 
+socket.on('disconnect', () => {
+    console.log("SOCKET LOST");
+});
+
 socket.on('status', (state) => {
 
     console.log("STATUS:", state);
 
     const status = document.getElementById('status');
 
-    if(state){
+    if (state) {
         status.innerHTML = '🟢 ON AIR';
     } else {
         status.innerHTML = '🔴 OFF AIR';
@@ -25,3 +47,6 @@ socket.on('status', (state) => {
 });
 
 </script>
+
+</body>
+</html>
